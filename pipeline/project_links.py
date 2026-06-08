@@ -1,5 +1,6 @@
 """Parse project link fields and enrich rows with GitHub metadata."""
 import re
+from urllib.parse import unquote
 
 from activity import classify_activity, format_commit_month
 from github_client import GitHubClient
@@ -43,15 +44,21 @@ def parse_github_link(link: str) -> dict | None:
     return {
         "owner": match.group(1),
         "repo": match.group(2).removesuffix(".git"),
-        "path": match.group(4) or "",
+        "ref": match.group(3) or "",
+        "path": unquote(match.group(4) or ""),
     }
 
 
 def cached_latest_commit(github: GitHubClient, cache: dict, parsed: dict) -> str:
     """Use a shared cache so duplicate links do not repeat API calls."""
-    key = ("commit", parsed["owner"], parsed["repo"], parsed["path"])
+    key = ("commit", parsed["owner"], parsed["repo"], parsed["ref"], parsed["path"])
     if key not in cache:
-        cache[key] = github.latest_commit(parsed["owner"], parsed["repo"], parsed["path"])
+        cache[key] = github.latest_commit(
+            parsed["owner"],
+            parsed["repo"],
+            parsed["path"],
+            parsed["ref"],
+        )
     return cache[key]
 
 

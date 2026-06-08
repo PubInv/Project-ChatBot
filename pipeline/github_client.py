@@ -2,6 +2,7 @@
 import json
 import os
 from urllib.error import HTTPError, URLError
+from urllib.parse import quote
 from urllib.request import Request, urlopen
 
 
@@ -22,17 +23,19 @@ class GitHubClient:
         # Authenticate API requests made by the workflow.
         self.api_headers["Authorization"] = f"Bearer {token}"
 
-    def latest_commit(self, owner: str, repo: str, path: str = "") -> str:
+    def latest_commit(self, owner: str, repo: str, path: str = "", ref: str = "") -> str:
         """Return the latest commit timestamp for a repo or one file path."""
         # The commits endpoint returns newest commits first when per_page=1.
-        url = f"https://api.github.com/repos/{owner}/{repo}/commits?per_page=1"
+        params = ["per_page=1"]
 
-        # Blob links point to project idea markdown files; use the file-specific
-        # latest commit rather than the whole repository's latest commit.
+        # Blob links include a branch/ref and a file path. Both matter for
+        # repositories whose default branch differs from the blob link branch.
+        if ref:
+            params.append(f"sha={quote(ref)}")
         if path:
-            from urllib.parse import quote
+            params.append(f"path={quote(path)}")
 
-            url += f"&path={quote(path)}"
+        url = f"https://api.github.com/repos/{owner}/{repo}/commits?{'&'.join(params)}"
 
         try:
             # commits is a list; the first item is the newest matching commit.
@@ -41,8 +44,11 @@ class GitHubClient:
                 commit = commits[0].get("commit", {})
                 return (commit.get("committer") or commit.get("author") or {}).get("date", "")
         except (HTTPError, URLError, OSError, KeyError, TypeError):
-            # Fall back to repository pushed_at if the commits lookup fails.
+            # If a file-specific lookup fails, do not substitute repo activity.
+            # That would make old project idea files look fresh.
             pass
+        if path:
+            return ""
         return self.repo_pushed_at(owner, repo)
 
     def repo_pushed_at(self, owner: str, repo: str) -> str:
