@@ -40,6 +40,13 @@ jobs:
       - name: Run pipeline tests
         run: python3 -m unittest discover -s tests
 
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Run chatbot tests
+        run: node --test chatbot/recommend.test.mjs
+
       - name: Commit workbook changes
         run: |
           git config user.name "github-actions[bot]"
