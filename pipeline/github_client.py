@@ -58,6 +58,20 @@ class GitHubClient:
         except (HTTPError, URLError, OSError):
             return ""
 
+    def description_text(self, owner: str, repo: str, path: str = "", ref: str = "") -> str:
+        """Return a repo README, or the linked idea file, as plain text."""
+        if path:
+            url = f"https://raw.githubusercontent.com/{owner}/{repo}/{ref or 'HEAD'}/{quote(path)}"
+            headers = self.headers
+        else:
+            url = f"https://api.github.com/repos/{owner}/{repo}/readme"
+            headers = {**self.api_headers, "Accept": "application/vnd.github.raw"}
+        try:
+            with urlopen(Request(url, headers=headers), timeout=12) as response:
+                return response.read().decode("utf-8", errors="ignore")
+        except (HTTPError, URLError, OSError):
+            return ""
+
     def get_json(self, url: str):
         """GET a GitHub API URL and decode the JSON body."""
         with urlopen(Request(url, headers=self.api_headers), timeout=12) as response:
