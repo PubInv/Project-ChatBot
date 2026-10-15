@@ -12,7 +12,7 @@ from workbook_writer import write_computed_columns
 
 COMPUTED_COLUMNS = {
     # Excel header -> field name in the enriched row dictionary.
-    "Status": "activity_status",
+    "Activity Status": "activity_status",
     "Last Commit": "last_commit",
     "Description Source": "description_source",
 }
