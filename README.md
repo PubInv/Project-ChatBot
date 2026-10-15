@@ -21,6 +21,15 @@ The team ran into issues with the recommendation rankings, and so far the additi
 
 In October of 2025, the project was reopened for further updates, and/or to be implemented on the Public Invention website. Awaiting further updates.
 
+## Project data (JSON)
+
+A weekly GitHub Action (`.github/workflows/refresh-project-workbook.yml`) refreshes the workbook's activity columns, then `pipeline/build_json.py` writes:
+
+- `data/projects.json`: one record per project with status, synopsis, a README summary, priority, joinability, difficulty, Seeking Volunteers/Mentors (`yes` / `maybe` / `no` / `unknown`), activity (`Active` / `Stale` / `Dormant` / `Unknown`) and canonical skills.
+- `data/skills.json`: the canonical skills used by at least one project.
+
+Skills come from the workbook's Skills column, mapped through `data/skill_aliases.json`, plus keywords found in each project's README or idea file (`pipeline/skill_rules.py`). To run it locally: `GITHUB_TOKEN=$(gh auth token) python3 pipeline/build_json.py`, and `python3 -m unittest discover -s tests` for the tests.
+
 ## Resources
 
 The current [Public Invention Project Chatbot](https://chatgpt.com/g/g-67c0c512437c8191844d6afd21abfb21-public-invention-project-chatbot?model=gpt-4o) is live and can provide details about projects currently on the project spreadsheet included in this repository.
