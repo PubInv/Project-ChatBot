@@ -1,0 +1,38 @@
+openapi: 3.1.0
+info:
+  title: Public Invention projects
+  description: The live project list the Public Invention chatbot recommends from, regenerated weekly from the project workbook and GitHub.
+  version: 1.0.0
+servers:
+  - url: https://raw.githubusercontent.com/PubInv/Project-ChatBot/main
+paths:
+  /data/projects.json:
+    get:
+      operationId: getProjects
+      summary: Every Public Invention project with status, priority, skills and whether it may be recommended.
+      responses:
+        "200":
+          description: Array of projects.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    project: {type: string}
+                    status: {type: string, description: "Highly Active, Progress but Inactive, Ready-to-start or Preliminary"}
+                    status_rank: {type: integer, description: "1 is shown first"}
+                    eligible: {type: boolean, description: "false means never recommend it"}
+                    priority: {type: number, description: "The sheet's Order column; 11 is highest"}
+                    synopsis: {type: string}
+                    summary: {type: string}
+                    link: {type: string, description: "GitHub repo or idea file"}
+                    page: {type: string, description: "The project's page on pubinv.org, when it has one; prefer it over link"}
+                    category: {type: string}
+                    joinability: {type: number, description: "1 easy to join, 3 you may have to start it yourself"}
+                    difficulty: {type: number, description: "1 easiest, 10 hardest"}
+                    skills: {type: array, items: {type: string}, description: "Skills from the project sheet"}
+                    readme_skills: {type: array, items: {type: string}, description: "Skills guessed from the README; weaker evidence"}
+                    seeking_volunteers: {type: string, description: "yes, maybe, no or unknown"}
+                    activity_status: {type: string, description: "GitHub activity: Active, Stale, Dormant or Unknown"}

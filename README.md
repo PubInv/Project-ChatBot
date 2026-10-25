@@ -30,6 +30,16 @@ A weekly GitHub Action (`.github/workflows/refresh-project-workbook.yml`) refres
 
 Skills come from the workbook's Skills column, mapped through `data/skill_aliases.json`, plus keywords found in each project's README or idea file (`pipeline/skill_rules.py`). To run it locally: `GITHUB_TOKEN=$(gh auth token) python3 pipeline/build_json.py`, and `python3 -m unittest discover -s tests` for the tests.
 
+## Project Finder (the chatbot)
+
+`chatbot/widget.js` is a guided chat for the website: it asks a visitor's skills, what they want to learn and which area they care about, then recommends projects from `data/projects.json`. Public Invention's rules decide the order, in code (`pipeline/ranking.py`, mirrored in `chatbot/recommend.js`):
+
+- never recommend Moonrat, Oxygen Concentrator, PolyVent, ADaM or Librecorder, Preliminary projects, or projects not seeking volunteers;
+- Highly Active first, then Progress but Inactive, then Ready-to-start;
+- within a status, more matching skills first, then the sheet's Order priority.
+
+`tests/ranking_cases.json` is shared by the Python and JavaScript tests, so both rank the same way. Embedding it on pubinv.org: `docs/wordpress-embed.md`. The ChatGPT version reads the same JSON through an Action: `ChatBot_Instructions.md`. How the volunteer form works today: `docs/volunteer-form.md`.
+
 ## Resources
 
 The current [Public Invention Project Chatbot](https://chatgpt.com/g/g-67c0c512437c8191844d6afd21abfb21-public-invention-project-chatbot?model=gpt-4o) is live and can provide details about projects currently on the project spreadsheet included in this repository.
