@@ -9,6 +9,19 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_XLSX = REPO_ROOT / "sources" / "Public Invention Projects.xlsx"
 DEFAULT_SHEETS = {"Projects", "Shortlist"}
 
+# Extra columns carried into each row for the JSON build. Header prefix -> field.
+DETAIL_COLUMNS = {
+    "status": ("status",),
+    "synopsis": ("synopsis",),
+    "skills_raw": ("skills",),
+    "category": ("category",),
+    "priority": ("order",),
+    "joinability": ("joinability",),
+    "difficulty": ("difficulty",),
+    "seeking_volunteers": ("seeking volunteers",),
+    "seeking_mentors": ("seeking mentors",),
+}
+
 
 def read_project_rows(xlsx: Path = DEFAULT_XLSX, sheets: set[str] = DEFAULT_SHEETS) -> list[dict]:
     """Read project name and link cells from selected workbook tabs."""
@@ -41,17 +54,22 @@ def read_sheet(z: zipfile.ZipFile, target: str, strings: list[str], sheet_name: 
     if not project_col or not link_col:
         return []
 
+    detail_cols = {field: find_header(headers, *prefixes) for field, prefixes in DETAIL_COLUMNS.items()}
+
     # Convert each non-empty project row into the normalized record shape.
     records = []
     for row in range(2, max_row + 1):
         project = grid.get((row, project_col), "").strip()
         if project:
-            records.append({
+            record = {
                 "_sheet": sheet_name,
                 "_row": row,
                 "project": project,
                 "link": grid.get((row, link_col), "").strip(),
-            })
+            }
+            for field, col in detail_cols.items():
+                record[field] = grid.get((row, col), "").strip() if col else ""
+            records.append(record)
     return records
 
 

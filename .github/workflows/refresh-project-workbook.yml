@@ -32,14 +32,22 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: python3 pipeline/fetch.py
 
+      - name: Build project JSON for the chatbot
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python3 pipeline/build_json.py
+
+      - name: Run pipeline tests
+        run: python3 -m unittest discover -s tests
+
       - name: Commit workbook changes
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add sources/Public\ Invention\ Projects.xlsx
+          git add sources/Public\ Invention\ Projects.xlsx data/projects.json data/skills.json
           if git diff --staged --quiet; then
-            echo "No workbook changes."
+            echo "No workbook or JSON changes."
           else
-            git commit -m "chore: refresh project workbook"
+            git commit -m "chore: refresh project workbook and JSON"
             git push
           fi

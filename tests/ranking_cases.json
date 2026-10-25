@@ -1,0 +1,27 @@
+{
+  "_comment": "Shared by tests/test_ranking.py and chatbot/recommend.test.mjs so Python and the browser rank alike.",
+  "projects": [
+    {"project": "Project #1: Solar Kiln", "status": "Ready-to-start", "priority": 9, "category": "Energy", "skills": ["Mechanical Engineering", "Thermodynamics"], "readme_skills": [], "seeking_volunteers": "unknown"},
+    {"project": "Project #2: Pump Controller", "status": "Highly Active", "priority": 2, "category": "Machines", "skills": ["Arduino", "Programming"], "readme_skills": [], "seeking_volunteers": "unknown"},
+    {"project": "Project #3: Alarm Box", "status": "Highly Active", "priority": 7, "category": "Health", "skills": ["Arduino", "Programming", "UX Design"], "readme_skills": [], "seeking_volunteers": "yes"},
+    {"project": "Project #4: Early Sketch", "status": "Preliminary", "priority": 11, "category": "Machines", "skills": ["Arduino"], "readme_skills": [], "seeking_volunteers": "unknown"},
+    {"project": "Project #5: PolyVent", "status": "Highly Active", "priority": 11, "category": "Health", "skills": ["Arduino"], "readme_skills": [], "seeking_volunteers": "unknown"},
+    {"project": "Project #6: Closed Door", "status": "Highly Active", "priority": 10, "category": "Machines", "skills": ["Arduino"], "readme_skills": [], "seeking_volunteers": "no"},
+    {"project": "Project #7: Valve", "status": "Highly Active", "priority": 11, "category": "Machines", "skills": [], "readme_skills": ["Arduino", "Physics", "Writing"], "seeking_volunteers": "unknown"},
+    {"project": "Project #8: Garden Sensor", "status": "Progress but Inactive", "priority": 3, "category": "Agriculture", "skills": ["Arduino", "Biology"], "readme_skills": [], "seeking_volunteers": "unknown"}
+  ],
+  "cases": [
+    {"name": "status beats skill count and priority", "have": ["Arduino", "Programming"], "want": [], "category": "",
+     "expected": ["Project #3: Alarm Box", "Project #2: Pump Controller", "Project #8: Garden Sensor"]},
+    {"name": "excluded titles, Preliminary and not-seeking never appear", "have": ["Arduino"], "want": [], "category": "",
+     "expected": ["Project #3: Alarm Box", "Project #2: Pump Controller", "Project #8: Garden Sensor"]},
+    {"name": "README-only project needs two matches", "have": ["Physics", "Writing"], "want": [], "category": "",
+     "expected": ["Project #7: Valve"]},
+    {"name": "want-to-learn skills count too", "have": [], "want": ["Thermodynamics"], "category": "",
+     "expected": ["Project #1: Solar Kiln"]},
+    {"name": "category filter", "have": ["Arduino"], "want": [], "category": "Agriculture",
+     "expected": ["Project #8: Garden Sensor"]},
+    {"name": "no skills given lists by status then priority", "have": [], "want": [], "category": "",
+     "expected": ["Project #7: Valve", "Project #3: Alarm Box", "Project #2: Pump Controller", "Project #8: Garden Sensor", "Project #1: Solar Kiln"]}
+  ]
+}
