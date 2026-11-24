@@ -325,7 +325,7 @@
       "Writing"
     ],
     "activity_status": "Active",
-    "last_commit": "October 2026",
+    "last_commit": "November 2026",
     "description_source": "readme",
     "eligible": true,
     "status_rank": 1,
@@ -964,7 +964,7 @@
       "Programming",
       "Writing"
     ],
-    "activity_status": "Active",
+    "activity_status": "Stale",
     "last_commit": "May 2026",
     "description_source": "idea_file",
     "eligible": false,
